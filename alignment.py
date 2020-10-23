@@ -36,7 +36,7 @@ def computeHomography(f1, f2, matches, A_out=None):
     if A_out is not None:
         A_out[:] = A
 
-    x = minimizeAx(A) # find x that minimizes ||Ax||
+    x = minimizeAx(A) # find x that minimizes ||Ax||^2 s.t. ||x|| = 1
 
 
     H = np.eye(3) # create the homography matrix
@@ -49,6 +49,12 @@ def computeHomography(f1, f2, matches, A_out=None):
     #END TODO
 
     return H
+
+def minimizeAx(A):
+    """ Given an n-by-m array A, return the 1-by-m vector x that minimizes
+    ||Ax||^2 subject to ||x|| = 1.  This turns out to be the right singular
+    vector of A corresponding to the smallest singular value."""
+    return np.linalg.svd(A)[2][-1,:]
 
 def alignPair(f1, f2, matches, m, nRANSAC, RANSACthresh):
     '''
